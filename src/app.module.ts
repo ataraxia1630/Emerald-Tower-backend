@@ -33,6 +33,7 @@ import { SystemNotificationsModule } from './modules/system-notifications/system
 import { AuditModule } from './modules/audit/audit.module';
 import { PermissionsModule } from './modules/permission/permissions.module';
 import { BackupModule } from './modules/backup/backup.module';
+import { HealthModule } from './modules/health/health.module';
 
 @Module({
   imports: [
@@ -69,6 +70,7 @@ import { BackupModule } from './modules/backup/backup.module';
     AuditModule,
     PermissionsModule,
     BackupModule,
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
