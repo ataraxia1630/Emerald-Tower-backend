@@ -8,6 +8,7 @@ import {
   DiskHealthIndicator,
 } from '@nestjs/terminus';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import * as path from 'path';
 
 @ApiTags('ADMIN - System Health')
 @Controller('health')
@@ -24,6 +25,11 @@ export class HealthController {
   @HealthCheck()
   @ApiOperation({ summary: 'Active health check for all system components' })
   check() {
+    const isWindows = process.platform === 'win32';
+    const rootPath = isWindows
+      ? process.cwd().split(path.sep)[0] + path.sep
+      : '/';
+
     return this.health.check([
       () => this.db.pingCheck('database', { timeout: 3000 }),
       () =>
@@ -36,7 +42,7 @@ export class HealthController {
       () =>
         this.disk.checkStorage('disk-storage', {
           thresholdPercent: 0.9,
-          path: '/',
+          path: rootPath,
         }),
     ]);
   }
