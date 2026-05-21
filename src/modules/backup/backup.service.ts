@@ -13,13 +13,14 @@ import { RestoreJob, RestoreStatus } from './entities/restore-job.entity';
 import { ConfirmRestoreDto } from './dto/confirm-restore.dto';
 import { Readable } from 'stream';
 import { BackupStorageService } from './backup-storage.service';
+import * as os from 'os';
 
 const execAsync = promisify(exec);
 
 @Injectable()
 export class BackupService {
   private readonly logger = new Logger(BackupService.name);
-  private readonly tempDir = '/tmp/backups';
+  private readonly tempDir = path.join(os.tmpdir(), 'backups');
 
   constructor(
     @InjectRepository(Backup)
