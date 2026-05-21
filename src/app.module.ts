@@ -34,6 +34,7 @@ import { AuditModule } from './modules/audit/audit.module';
 import { PermissionsModule } from './modules/permission/permissions.module';
 import { BackupModule } from './modules/backup/backup.module';
 import { HealthModule } from './modules/health/health.module';
+import { MetricsModule } from './modules/metrics/metrics.module';
 
 @Module({
   imports: [
@@ -71,6 +72,7 @@ import { HealthModule } from './modules/health/health.module';
     PermissionsModule,
     BackupModule,
     HealthModule,
+    MetricsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
