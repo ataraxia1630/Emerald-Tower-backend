@@ -33,6 +33,8 @@ import { SystemNotificationsModule } from './modules/system-notifications/system
 import { AuditModule } from './modules/audit/audit.module';
 import { BackupModule } from './modules/backup/backup.module';
 import { SharedModule } from './modules/shared/shared.module';
+import { HealthModule } from './modules/health/health.module';
+import { MetricsModule } from './modules/metrics/metrics.module';
 
 @Module({
   imports: [
@@ -69,6 +71,8 @@ import { SharedModule } from './modules/shared/shared.module';
     SystemNotificationsModule,
     AuditModule,
     BackupModule,
+    HealthModule,
+    MetricsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
