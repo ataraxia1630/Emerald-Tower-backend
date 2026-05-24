@@ -21,16 +21,17 @@ import { ReportsService } from './reports.service';
 import { DashboardStatisticsDto } from './dto/dashboard-statistics.dto';
 import { MonthlyReportsResponseDto } from './dto/monthly-reports.dto';
 import { QueryReportDto } from './dto/query-report.dto';
-import { AuthGuard } from '../../guards/auth.guard';
 import { RolesGuard } from '../../guards/roles.guard';
 import { Roles } from '../../decorators/role.decorator';
 import { UserRole } from '../accounts/enums/user-role.enum';
 import { ApiDoc } from '../../decorators/api-doc.decorator';
 import { TransformInterceptor } from '../../interceptors/transform.interceptor';
+import { RequireModule } from 'src/decorators/permission.decorator';
+import { SystemModule } from '../permission/entities/role-permission.entity';
 
 @ApiTags('Reports')
+@RequireModule(SystemModule.REPORTING)
 @Controller('reports')
-@UseGuards(AuthGuard, RolesGuard)
 @ApiBearerAuth()
 export class ReportsController {
   constructor(private readonly reportsService: ReportsService) {}
@@ -86,7 +87,6 @@ export class ReportsController {
   }
 
   @Get('dashboard/export')
-  @Roles(UserRole.ADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiDoc({
     summary: '[ADMIN] Xuất thống kê dashboard sang Excel',
@@ -114,7 +114,6 @@ export class ReportsController {
 
   @Get('dashboard')
   @UseInterceptors(ClassSerializerInterceptor, TransformInterceptor)
-  @Roles(UserRole.ADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiDoc({
     summary: '[ADMIN] Lấy thống kê tổng hợp dashboard',

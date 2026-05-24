@@ -26,10 +26,10 @@ import { RolesGuard } from 'src/guards/roles.guard';
 import { Roles } from 'src/decorators/role.decorator';
 import { UserRole } from '../accounts/enums/user-role.enum';
 import { TransformInterceptor } from 'src/interceptors/transform.interceptor';
+import { Public } from 'src/decorators/permission.decorator';
 
 @ApiTags('Role-Permission Matrix')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(UserRole.ADMIN)
 @UseInterceptors(TransformInterceptor)
 @Controller('permissions')
@@ -37,6 +37,7 @@ export class PermissionsController {
   constructor(private readonly permissionsService: PermissionsService) {}
 
   @Get('matrix')
+  @Public()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Lấy toàn bộ Role-Permission Matrix (UC38)',
@@ -52,8 +53,7 @@ export class PermissionsController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Cập nhật permissions cho 1 cặp role + module (UC38)',
-    description:
-      'Chỉ field nào được gửi mới bị ghi đè. Thay đổi có hiệu lực với request mới (JWT hiện tại vẫn valid đến hết expiry).',
+    description: 'Chỉ field nào được gửi mới bị ghi đè.',
   })
   @ApiResponse({ status: 200, description: 'Permission entry updated' })
   updateOne(@Body() dto: UpdatePermissionEntryDto) {

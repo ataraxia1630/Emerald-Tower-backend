@@ -44,8 +44,12 @@ import { RolesGuard } from 'src/guards/roles.guard';
 import { Roles } from 'src/decorators/role.decorator';
 import { UserRole } from '../accounts/enums/user-role.enum';
 import { TransformInterceptor } from 'src/interceptors/transform.interceptor';
+import { RequireModule } from 'src/decorators/permission.decorator';
+import { SystemModule } from '../permission/entities/role-permission.entity';
 
 @ApiTags('Maintenance Tickets')
+@ApiBearerAuth()
+@RequireModule(SystemModule.MAINTENANCE)
 @Controller('maintenance-tickets')
 @UseInterceptors(ClassSerializerInterceptor, TransformInterceptor)
 //@UseGuards(JwtAuthGuard, RolesGuard)
@@ -78,7 +82,6 @@ export class MaintenanceTicketsController {
 
   @Post('scheduled')
   @HttpCode(HttpStatus.CREATED)
-  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Tạo phiếu bảo trì định kỳ (MAINTENANCE)' })
   @ApiResponse({
     status: HttpStatus.CREATED,
@@ -101,7 +104,6 @@ export class MaintenanceTicketsController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: '[ADMIN] Lấy danh sách phiếu bảo trì' })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -114,7 +116,6 @@ export class MaintenanceTicketsController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  @Roles(UserRole.ADMIN, UserRole.RESIDENT)
   @ApiOperation({ summary: 'Lấy chi tiết phiếu bảo trì' })
   @ApiParam({
     name: 'id',
@@ -136,7 +137,6 @@ export class MaintenanceTicketsController {
 
   @Get('assets/:assetId')
   @HttpCode(HttpStatus.OK)
-  @Roles(UserRole.ADMIN, UserRole.RESIDENT)
   @ApiOperation({ summary: 'Lấy danh sách phiếu bảo trì của một asset' })
   @ApiParam({
     name: 'assetId',
@@ -161,7 +161,6 @@ export class MaintenanceTicketsController {
 
   @Post(':id/assign')
   @HttpCode(HttpStatus.OK)
-  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: '[ADMIN] Phân công kỹ thuật viên' })
   @ApiParam({
     name: 'id',
@@ -186,7 +185,6 @@ export class MaintenanceTicketsController {
 
   @Post(':id/start')
   @HttpCode(HttpStatus.OK)
-  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: '[ADMIN] Bắt đầu công việc bảo trì' })
   @ApiParam({
     name: 'id',
@@ -212,7 +210,6 @@ export class MaintenanceTicketsController {
 
   @Post(':id/progress')
   @HttpCode(HttpStatus.OK)
-  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: '[ADMIN] Cập nhật tiến độ công việc' })
   @ApiParam({
     name: 'id',
@@ -243,7 +240,6 @@ export class MaintenanceTicketsController {
       { name: 'video', maxCount: 1 },
     ]),
   )
-  @Roles(UserRole.ADMIN, UserRole.OPERATIONS)
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: '[ADMIN, OPERATIONS] Hoàn tất sự cố' })
   @ApiParam({
@@ -285,7 +281,6 @@ export class MaintenanceTicketsController {
 
   @Post('scheduled/:id/complete')
   @HttpCode(HttpStatus.OK)
-  @Roles(UserRole.ADMIN, UserRole.OPERATIONS)
   @ApiOperation({ summary: '[ADMIN, OPERATIONS] Hoàn tất bảo trì định kỳ' })
   @ApiParam({
     name: 'id',
@@ -317,7 +312,6 @@ export class MaintenanceTicketsController {
 
   @Post(':id/cancel')
   @HttpCode(HttpStatus.OK)
-  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: '[ADMIN] Hủy phiếu bảo trì' })
   @ApiParam({
     name: 'id',
@@ -346,7 +340,6 @@ export class MaintenanceTicketsController {
 
   @Patch('incident/:id')
   @HttpCode(HttpStatus.OK)
-  @Roles(UserRole.ADMIN)
   @ApiOperation({
     summary: '[ADMIN] Cập nhật thông tin phiếu bảo trì sự cố (INCIDENT)',
   })
@@ -378,7 +371,6 @@ export class MaintenanceTicketsController {
 
   @Patch('scheduled/:id')
   @HttpCode(HttpStatus.OK)
-  @Roles(UserRole.ADMIN)
   @ApiOperation({
     summary: '[ADMIN] Cập nhật phiếu bảo trì định kỳ (MAINTENANCE)',
   })
@@ -413,7 +405,6 @@ export class MaintenanceTicketsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
-  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: '[ADMIN] Xóa mềm phiếu bảo trì' })
   @ApiParam({
     name: 'id',
@@ -434,7 +425,6 @@ export class MaintenanceTicketsController {
 
   @Delete('batch/delete')
   @HttpCode(HttpStatus.OK)
-  @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: '[ADMIN] Xóa mềm nhiều phiếu bảo trì' })
   @ApiResponse({
     status: HttpStatus.OK,

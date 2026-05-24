@@ -12,8 +12,15 @@ import {
   UseInterceptors,
   ClassSerializerInterceptor,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { BlocksService } from './blocks.service';
 import { CreateBlockDto } from './dto/create-block.dto';
 import { UpdateBlockDto } from './dto/update-block.dto';
@@ -24,8 +31,15 @@ import { BlockHasResidentsResponseDto } from './dto/block-has-residents-response
 import { DeleteManyBlocksDto } from './dto/delete-many-blocks.dto';
 import { TransformInterceptor } from 'src/interceptors/transform.interceptor';
 import { plainToInstance } from 'class-transformer';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/guards/roles.guard';
+import { RequireModule } from 'src/decorators/permission.decorator';
+import { SystemModule } from '../permission/entities/role-permission.entity';
 
 @ApiTags('Blocks')
+@UseGuards(JwtAuthGuard)
+@RequireModule(SystemModule.RESIDENT_APARTMENT)
+@ApiBearerAuth()
 @Controller('blocks')
 @UseInterceptors(ClassSerializerInterceptor, TransformInterceptor)
 export class BlocksController {

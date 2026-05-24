@@ -34,13 +34,15 @@ import { UpdateIssueStatusDto } from './dtos/update-issue-status.dto';
 import { IssueResponseDto } from './dtos/issue-response.dto';
 import { TransformInterceptor } from 'src/interceptors/transform.interceptor';
 import { ApiDoc } from 'src/decorators/api-doc.decorator';
-import { AuthGuard } from 'src/guards/auth.guard';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { CurrentUser } from 'src/decorators/user.decorator';
 import { UploadApiResponse } from 'cloudinary';
 import { UserRole } from '../accounts/enums/user-role.enum';
+import { RequireModule } from 'src/decorators/permission.decorator';
+import { SystemModule } from '../permission/entities/role-permission.entity';
 
 @ApiTags('Issues')
+@RequireModule(SystemModule.FEEDBACK)
 @Controller('issues')
 @UseInterceptors(ClassSerializerInterceptor, TransformInterceptor)
 export class IssuesController {
@@ -50,7 +52,6 @@ export class IssuesController {
   ) {}
 
   @Post()
-  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.CREATED)
   @UseInterceptors(FilesInterceptor('files', 5))
   @ApiConsumes('multipart/form-data')
@@ -101,7 +102,6 @@ export class IssuesController {
   }
 
   @Get()
-  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiDoc({
     summary: 'Lấy danh sách tất cả phản ánh',
@@ -122,7 +122,6 @@ export class IssuesController {
   }
 
   @Get('mine')
-  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiDoc({
     summary: 'Danh sách phản ánh của tôi',
@@ -225,7 +224,6 @@ export class IssuesController {
   }
 
   @Post(':id/reject')
-  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiDoc({
     summary: 'BQL/Admin từ chối xử lý phản ánh',
@@ -260,7 +258,6 @@ export class IssuesController {
   }
 
   @Post(':id/rate')
-  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiDoc({
     summary: 'Đánh giá việc xử lý phản ánh',
@@ -294,7 +291,6 @@ export class IssuesController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiDoc({
     summary: 'Cư dân xóa phản ánh (khi chưa dc tiếp nhận)',
@@ -326,7 +322,6 @@ export class IssuesController {
   }
 
   @Post('delete-many')
-  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiDoc({
     summary: 'Cư dân xóa nhiều phản ánh cùng lúc',
@@ -357,7 +352,6 @@ export class IssuesController {
   }
 
   @Patch(':id/assign-technician-department')
-  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiDoc({
     summary: 'BQL/Admin chuyển phản ánh cho bộ phận kỹ thuật vận hành',
@@ -392,7 +386,6 @@ export class IssuesController {
   }
 
   @Patch(':id/status')
-  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiDoc({
     summary: 'BQL/Admin cập nhật trạng thái phản ánh',

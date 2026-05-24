@@ -39,6 +39,9 @@ import { AssignRoleDto } from './dto/assign-role.dto';
 
 @ApiTags('Accounts')
 @Controller('accounts')
+@UseGuards(JwtAuthGuard, RolesGuard) //FIX 1: Bảo vệ TẤT CẢ các API bên dưới mặc định phải đăng nhập
+@Roles(UserRole.ADMIN) // FIX 2: Ép buộc tất cả các API chỉ duy nhất ADMIN tối cao mới có quyền dùng
+@ApiBearerAuth()
 @UseInterceptors(ClassSerializerInterceptor, TransformInterceptor)
 export class AccountsController {
   constructor(private readonly accountsService: AccountsService) {}
@@ -65,8 +68,6 @@ export class AccountsController {
   }
 
   @Get()
-  // @Roles(UserRole.ADMIN)
-  // @UseGuards(JwtAuthGuard, RolesGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get all accounts with filters' })
   @ApiResponse({
@@ -191,8 +192,6 @@ export class AccountsController {
   // ADD
   @Patch(':id/active')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN)
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Activate or deactivate an account (UC31)',
@@ -212,8 +211,6 @@ export class AccountsController {
 
   @Patch(':id/role')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN)
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Assign a new role to an account (UC31)',

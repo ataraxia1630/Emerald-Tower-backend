@@ -9,15 +9,32 @@ import { UserRole } from '../../accounts/enums/user-role.enum';
 
 // Các module theo BRD Security Matrix (UC38)
 export enum SystemModule {
-  RESIDENT_APARTMENT = 'RESIDENT_APARTMENT',
-  INVOICE_DEBT = 'INVOICE_DEBT',
-  ASSET_EQUIPMENT = 'ASSET_EQUIPMENT',
-  MAINTENANCE = 'MAINTENANCE',
-  FEEDBACK = 'FEEDBACK',
-  AMENITY_BOOKING = 'AMENITY_BOOKING',
-  NOTIFICATIONS_VOTING = 'NOTIFICATIONS_VOTING',
-  REPORTING = 'REPORTING',
-  SYSTEM_ADMIN = 'SYSTEM_ADMIN',
+  // Quản lý tài khoản & Hệ thống tối cao
+  SYSTEM_ADMIN = 'SYSTEM_ADMIN', // map với module 'accounts', 'permission', 'backup', 'audit'
+
+  // Phân hệ Cư dân & Căn hộ
+  RESIDENT_APARTMENT = 'RESIDENT_APARTMENT', // map với module 'residents', 'apartments', 'blocks'
+
+  // Phân hệ Hóa đơn, Chi phí & Thanh toán
+  INVOICE_DEBT = 'INVOICE_DEBT', // map với module 'invoices', 'fees', 'payments'
+
+  // Phân hệ Tài sản & Thiết bị
+  ASSET_EQUIPMENT = 'ASSET_EQUIPMENT', // map với module 'assets', 'asset-types'
+
+  // Phân hệ Bảo trì, Sửa chữa & Kỹ thuật viên
+  MAINTENANCE = 'MAINTENANCE', // map với module 'maintenance-tickets', 'technicians'
+
+  // Phân hệ Ý kiến & Phản hồi
+  FEEDBACK = 'FEEDBACK', // map với module 'issues'
+
+  // Phân hệ Đặt chỗ Tiện ích
+  AMENITY_BOOKING = 'AMENITY_BOOKING', // map với module 'bookings', 'AMENITYs'
+
+  // Phân hệ Thông báo & Khảo sát/Bình chọn
+  NOTIFICATIONS_VOTING = 'NOTIFICATIONS_VOTING', // map với module 'notifications', 'system-notifications', 'votings'
+
+  // Phân hệ Báo cáo & Thống kê
+  REPORTING = 'REPORTING', // map với module 'reports'
 }
 
 @Entity('role_permissions')

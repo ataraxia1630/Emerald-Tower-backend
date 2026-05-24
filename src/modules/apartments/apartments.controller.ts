@@ -12,8 +12,15 @@ import {
   UseInterceptors,
   ClassSerializerInterceptor,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { ApartmentsService } from './apartments.service';
 import { CreateApartmentDto } from './dto/create-apartment.dto';
 import { UpdateApartmentDto } from './dto/update-apartment.dto';
@@ -23,8 +30,14 @@ import { ApartmentListResponseDto } from './dto/apartment-list-response.dto';
 import { ApartmentDetailResponseDto } from './dto/apartment-detail-response.dto';
 import { DeleteManyApartmentsDto } from './dto/delete-many-apartments.dto';
 import { TransformInterceptor } from 'src/interceptors/transform.interceptor';
+import { RequireModule } from 'src/decorators/permission.decorator';
+import { SystemModule } from '../permission/entities/role-permission.entity';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/guards/roles.guard';
 
 @ApiTags('Apartments')
+@RequireModule(SystemModule.RESIDENT_APARTMENT)
+@ApiBearerAuth()
 @Controller('apartments')
 @UseInterceptors(ClassSerializerInterceptor, TransformInterceptor)
 export class ApartmentsController {

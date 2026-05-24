@@ -33,20 +33,21 @@ import { CreateBatchPaymentDto } from './dto/create-batch-payment.dto';
 import { CreatePaymentResponseDto } from './dto/create-payment-response.dto';
 import { PaymentResponseDto } from './dto/payment-response.dto';
 import { MoMoWebhookDto } from './dto/momo-webhook.dto';
-import { AuthGuard } from '../../guards/auth.guard';
 import { CurrentUser } from '../../decorators/user.decorator';
 import { TransformInterceptor } from '../../interceptors/transform.interceptor';
 import { ApiDoc } from '../../decorators/api-doc.decorator';
+import { SystemModule } from '../permission/entities/role-permission.entity';
+import { RequireModule } from 'src/decorators/permission.decorator';
 
 @ApiTags('Payments')
 @ApiBearerAuth()
+@RequireModule(SystemModule.INVOICE_DEBT)
 @Controller('payments')
 @UseInterceptors(ClassSerializerInterceptor, TransformInterceptor)
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
   @Post()
-  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiDoc({
     summary: 'Tạo link thanh toán',
@@ -78,7 +79,6 @@ export class PaymentsController {
   }
 
   @Post('batch')
-  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiDoc({
     summary: 'Tạo link thanh toán batch',
@@ -118,7 +118,6 @@ export class PaymentsController {
   }
 
   @Get(':id')
-  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiDoc({
     summary: 'Lấy thông tin giao dịch',
@@ -144,7 +143,6 @@ export class PaymentsController {
   }
 
   @Get('txn-ref/:txnRef')
-  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiDoc({
     summary: 'Lấy thông tin giao dịch theo mã tham chiếu',
@@ -170,7 +168,6 @@ export class PaymentsController {
   }
 
   @Get('invoice/:invoiceId')
-  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiDoc({
     summary: 'Lấy danh sách giao dịch của hóa đơn',
@@ -192,7 +189,6 @@ export class PaymentsController {
   }
 
   @Get('booking/:bookingId')
-  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiDoc({
     summary: 'Lấy danh sách giao dịch của booking',

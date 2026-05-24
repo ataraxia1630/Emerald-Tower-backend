@@ -28,6 +28,7 @@ import { AuthResponseDto } from './dto/auth-response.dto';
 import { AccessTokenDto } from './dto/access-token.dto';
 import { Account } from '../accounts/entities/account.entity';
 import { TransformInterceptor } from 'src/interceptors/transform.interceptor';
+import { Public } from 'src/decorators/permission.decorator';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -35,6 +36,7 @@ import { TransformInterceptor } from 'src/interceptors/transform.interceptor';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Public()
   @UseGuards(LocalAuthGuard)
   @Post('login')
   @HttpCode(HttpStatus.OK)

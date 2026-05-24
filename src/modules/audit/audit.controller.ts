@@ -7,11 +7,14 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../guards/roles.guard';
 import { Roles } from 'src/decorators/role.decorator';
 import { UserRole } from '../accounts/enums/user-role.enum';
+import { RequireModule } from 'src/decorators/permission.decorator';
+import { SystemModule } from '../permission/entities/role-permission.entity';
 
 @ApiTags('Admin — Audit Log')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(UserRole.ADMIN)
+// @UseGuards(JwtAuthGuard, RolesGuard)
+// @Roles(UserRole.ADMIN)
+@RequireModule(SystemModule.SYSTEM_ADMIN)
 @Controller('admin/audit-logs')
 export class AuditController {
   constructor(private readonly auditService: AuditService) {}

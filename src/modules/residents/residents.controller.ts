@@ -40,8 +40,13 @@ import { RolesGuard } from 'src/guards/roles.guard';
 import { Roles } from 'src/decorators/role.decorator';
 import { UserRole } from '../accounts/enums/user-role.enum';
 import { CurrentUser } from 'src/decorators/user.decorator';
+import { RequireModule } from 'src/decorators/permission.decorator';
+import { SystemModule } from '../permission/entities/role-permission.entity';
 
 @ApiTags('Residents')
+@UseGuards(JwtAuthGuard)
+@RequireModule(SystemModule.RESIDENT_APARTMENT)
+@ApiBearerAuth()
 @Controller('residents')
 @UseInterceptors(ClassSerializerInterceptor, TransformInterceptor)
 export class ResidentsController {

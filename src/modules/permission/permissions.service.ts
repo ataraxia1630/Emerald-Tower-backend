@@ -249,8 +249,16 @@ export class PermissionsService {
     private readonly permRepo: Repository<RolePermission>,
   ) {}
 
+  // 1. Khai báo biến lưu cache ngay trong bộ nhớ RAM của Service
+  private matrixCache: Record<string, Record<string, any>> | null = null;
+
   /** Toàn bộ matrix dưới dạng: { [role]: { [module]: { canView, ... } } } */
   async getMatrix(): Promise<Record<string, Record<string, object>>> {
+    // 2. Nếu trong RAM đã có dữ liệu, trả về NGAY LẬP TỨC (Mất 0ms, không chạm vào DB)
+    if (this.matrixCache) {
+      return this.matrixCache;
+    }
+
     const rows = await this.permRepo.find({
       order: { role: 'ASC', module: 'ASC' },
     });
@@ -259,15 +267,21 @@ export class PermissionsService {
     for (const row of rows) {
       matrix[row.role] ??= {};
       matrix[row.role][row.module] = {
-        canView: row.canView,
-        canCreate: row.canCreate,
-        canEdit: row.canEdit,
-        canApprove: row.canApprove,
-        canExport: row.canExport,
-        canDelete: row.canDelete,
+        canView: row.canView ?? false,
+        canCreate: row.canCreate ?? false,
+        canEdit: row.canEdit ?? false,
+        canApprove: row.canApprove ?? false,
+        canExport: row.canExport ?? false,
+        canDelete: row.canDelete ?? false,
       };
     }
+    this.matrixCache = matrix;
     return matrix;
+  }
+
+  // 4. Tạo một hàm phụ để xóa bộ đệm khi dữ liệu bị thay đổi
+  private clearCache() {
+    this.matrixCache = null;
   }
 
   /** Upsert 1 entry role + module */
@@ -288,6 +302,8 @@ export class PermissionsService {
     if (dto.canExport !== undefined) row.canExport = dto.canExport;
     if (dto.canDelete !== undefined) row.canDelete = dto.canDelete;
 
+    this.clearCache(); // 5. Xóa cache sau khi update thành công
+
     return this.permRepo.save(row);
   }
 
@@ -295,17 +311,23 @@ export class PermissionsService {
   async bulkUpdate(
     dto: BulkUpdatePermissionsDto,
   ): Promise<{ updated: number }> {
-    const results = await Promise.all(
-      dto.permissions.map((entry) => this.updateOne(entry)),
-    );
-    return { updated: results.length };
+    if (!dto.permissions || dto.permissions.length === 0) return { updated: 0 };
+
+    // Thực hiện UPSERT trong 1 câu lệnh SQL duy nhất
+    await this.permRepo.upsert(dto.permissions, {
+      conflictPaths: ['role', 'module'], // Đảm bảo bạn đã tạo Composite Unique Index cho 2 trường này trong Entity
+      skipUpdateIfNoValuesChanged: true, // Tối ưu hóa nếu data gửi lên trùng data cũ
+    });
+
+    this.clearCache(); // 6. Xóa cache sau khi bulk update thành công
+    return { updated: dto.permissions.length };
   }
 
   /** Seed matrix mặc định từ BRD. Safe to run nhiều lần (upsert). */
   async seedDefaultMatrix(): Promise<{ seeded: number }> {
-    const results = await Promise.all(
-      BRD_DEFAULT_MATRIX.map((entry) => this.updateOne(entry)),
-    );
-    return { seeded: results.length };
+    await this.permRepo.upsert(BRD_DEFAULT_MATRIX, {
+      conflictPaths: ['role', 'module'],
+    });
+    return { seeded: BRD_DEFAULT_MATRIX.length };
   }
 }

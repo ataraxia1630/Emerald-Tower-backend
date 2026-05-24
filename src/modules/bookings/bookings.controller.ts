@@ -26,6 +26,8 @@ import { Repository } from 'typeorm';
 import { HttpException, HttpStatus as Status } from '@nestjs/common';
 import { PaymentsService } from '../payments/payments.service';
 import { CreatePaymentDto } from '../payments/dto/create-payment.dto';
+import { RequireModule } from 'src/decorators/permission.decorator';
+import { SystemModule } from '../permission/entities/role-permission.entity';
 
 @ApiTags('Bookings')
 @Controller('bookings')
@@ -39,7 +41,7 @@ export class BookingsController {
   ) {}
 
   @Get('mine')
-  @UseGuards(AuthGuard)
+  @RequireModule(SystemModule.AMENITY_BOOKING)
   @HttpCode(HttpStatus.OK)
   @ApiDoc({
     summary: 'Lấy danh sách các booking của cư dân đó',

@@ -31,14 +31,15 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { SocketsModule } from './modules/sockets/sockets.module';
 import { SystemNotificationsModule } from './modules/system-notifications/system-notifications.module';
 import { AuditModule } from './modules/audit/audit.module';
-import { PermissionsModule } from './modules/permission/permissions.module';
 import { BackupModule } from './modules/backup/backup.module';
+import { SharedModule } from './modules/shared/shared.module';
 import { HealthModule } from './modules/health/health.module';
 import { MetricsModule } from './modules/metrics/metrics.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    SharedModule,
     CloudinaryModule,
     SupabaseStorageModule,
     MailerModule,
@@ -69,7 +70,6 @@ import { MetricsModule } from './modules/metrics/metrics.module';
     SocketsModule,
     SystemNotificationsModule,
     AuditModule,
-    PermissionsModule,
     BackupModule,
     HealthModule,
     MetricsModule,

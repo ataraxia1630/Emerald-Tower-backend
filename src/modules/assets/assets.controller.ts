@@ -23,8 +23,11 @@ import { AssetDetailResponseDto } from './dto/asset-detail-response.dto';
 import { DeleteManyAssetsDto } from './dto/delete-many-assets.dto';
 import { TransformInterceptor } from 'src/interceptors/transform.interceptor';
 import { plainToInstance } from 'class-transformer';
+import { RequireModule } from 'src/decorators/permission.decorator';
+import { SystemModule } from '../permission/entities/role-permission.entity';
 
 @ApiTags('Assets')
+@RequireModule(SystemModule.ASSET_EQUIPMENT)
 @Controller('assets')
 @UseInterceptors(ClassSerializerInterceptor, TransformInterceptor)
 export class AssetsController {

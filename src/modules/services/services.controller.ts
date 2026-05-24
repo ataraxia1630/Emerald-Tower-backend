@@ -35,8 +35,14 @@ import { RolesGuard } from 'src/guards/roles.guard';
 import { Roles } from 'src/decorators/role.decorator';
 import { CurrentUser } from 'src/decorators/user.decorator';
 import { UserRole } from '../accounts/enums/user-role.enum';
-
+import {
+  RequireModule,
+  RequireAction,
+} from 'src/decorators/permission.decorator';
+import { SystemModule } from '../permission/entities/role-permission.entity';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 @ApiTags('Services')
+@RequireModule(SystemModule.AMENITY_BOOKING)
 @Controller('services')
 @UseInterceptors(ClassSerializerInterceptor, TransformInterceptor)
 export class ServicesController {
@@ -157,8 +163,6 @@ export class ServicesController {
   }
 
   @Post()
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN)
   @UseInterceptors(FileInterceptor('image'))
   @ApiConsumes('multipart/form-data')
   @HttpCode(HttpStatus.CREATED)
@@ -192,8 +196,6 @@ export class ServicesController {
   }
 
   @Patch(':id')
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN)
   @UseInterceptors(FileInterceptor('image'))
   @ApiConsumes('multipart/form-data')
   @HttpCode(HttpStatus.OK)
@@ -237,8 +239,6 @@ export class ServicesController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiDoc({
     summary: 'Xóa mềm dịch vụ (Admin)',
@@ -273,8 +273,6 @@ export class ServicesController {
   }
 
   @Post('delete-many')
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiDoc({
     summary: 'Xóa mềm nhiều dịch vụ (Admin)',

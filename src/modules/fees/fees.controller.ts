@@ -23,8 +23,11 @@ import { FeeDetailResponseDto } from './dto/fee-detail-response.dto';
 import { DeleteManyFeesDto } from './dto/delete-many-fees.dto';
 import { TransformInterceptor } from 'src/interceptors/transform.interceptor';
 import { plainToInstance } from 'class-transformer';
+import { SystemModule } from '../permission/entities/role-permission.entity';
+import { RequireModule } from 'src/decorators/permission.decorator';
 
 @ApiTags('Fees')
+@RequireModule(SystemModule.INVOICE_DEBT)
 @Controller('fees')
 @UseInterceptors(ClassSerializerInterceptor, TransformInterceptor)
 export class FeesController {

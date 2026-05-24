@@ -32,20 +32,21 @@ import { NotificationDetailResponseDto } from './dto/notification-detail-respons
 import { DeleteManyNotificationsDto } from './dto/delete-many-notifications.dto';
 import { TransformInterceptor } from 'src/interceptors/transform.interceptor';
 import { plainToInstance } from 'class-transformer';
-import { AuthGuard } from 'src/guards/auth.guard';
 import { CurrentUser } from 'src/decorators/user.decorator';
 import { UseGuards } from '@nestjs/common';
 import { ApiDoc } from 'src/decorators/api-doc.decorator';
+import { SystemModule } from '../permission/entities/role-permission.entity';
+import { RequireModule } from 'src/decorators/permission.decorator';
 
 @ApiTags('Notifications')
 @ApiBearerAuth()
+@RequireModule(SystemModule.NOTIFICATIONS_VOTING)
 @Controller('notifications')
 @UseInterceptors(ClassSerializerInterceptor, TransformInterceptor)
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
 
   @Get('mine')
-  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiDoc({
     summary: 'Lấy thông báo cho cư dân hiện tại',
@@ -209,7 +210,6 @@ export class NotificationsController {
   }
 
   @Patch(':id/toggle-read')
-  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Bật/tắt trạng thái đã đọc của 1 thông báo' })
   async toggleRead(
     @Param('id', ParseIntPipe) id: number,
@@ -219,7 +219,6 @@ export class NotificationsController {
   }
 
   @Post('read-all')
-  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Đánh dấu tất cả thông báo là đã đọc' })
   async markAllRead(@CurrentUser('id') accountId: number) {
@@ -227,7 +226,6 @@ export class NotificationsController {
   }
 
   @Delete(':id/hide')
-  @UseGuards(AuthGuard)
   @ApiOperation({
     summary: 'Cư dân ẩn (xóa) 1 thông báo khỏi danh sách của mình',
   })
@@ -239,7 +237,6 @@ export class NotificationsController {
   }
 
   @Post('hide-all')
-  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Cư dân ẩn tất cả thông báo hiện có' })
   async hideAll(@CurrentUser('id') accountId: number) {

@@ -25,24 +25,24 @@ import { VotingDetailResponseDto } from './dto/voting-detail-response.dto';
 import { VotingListResponseDto } from './dto/voting-list-response.dto';
 import { VotingMyVotingResponseDto } from './dto/voting-my-voting-response.dto';
 import { VotingStatisticsResponseDto } from './dto/voting-statistics-response.dto';
-import { AuthGuard } from '../../guards/auth.guard';
 import { RolesGuard } from '../../guards/roles.guard';
 import { Roles } from '../../decorators/role.decorator';
 import { CurrentUser } from '../../decorators/user.decorator';
 import { UserRole } from '../accounts/enums/user-role.enum';
 import { ApiDoc } from '../../decorators/api-doc.decorator';
 import { TransformInterceptor } from '../../interceptors/transform.interceptor';
+import { SystemModule } from '../permission/entities/role-permission.entity';
+import { RequireModule } from 'src/decorators/permission.decorator';
 
 @ApiTags('Votings')
+@RequireModule(SystemModule.NOTIFICATIONS_VOTING)
 @Controller('votings')
-@UseGuards(AuthGuard)
 @UseInterceptors(ClassSerializerInterceptor, TransformInterceptor)
 @ApiBearerAuth()
 export class VotingsController {
   constructor(private readonly votingsService: VotingsService) {}
 
   @Post()
-  @Roles(UserRole.ADMIN)
   @UseInterceptors(
     FilesInterceptor('files', 10, {
       limits: {
@@ -65,7 +65,6 @@ export class VotingsController {
   }
 
   @Get()
-  @Roles(UserRole.ADMIN, UserRole.RESIDENT)
   @ApiDoc({
     summary: 'Lấy danh sách tất cả cuộc bỏ phiếu (Admin)',
     description:
@@ -95,7 +94,6 @@ export class VotingsController {
   }
 
   @Get(':id')
-  @Roles(UserRole.ADMIN, UserRole.RESIDENT)
   @ApiDoc({
     summary: 'Lấy chi tiết cuộc bỏ phiếu',
     description:
@@ -107,7 +105,6 @@ export class VotingsController {
   }
 
   @Get(':id/statistics')
-  @Roles(UserRole.ADMIN)
   @ApiDoc({
     summary: 'Lấy kết quả thống kê bỏ phiếu',
     description:
@@ -119,7 +116,6 @@ export class VotingsController {
   }
 
   @Patch(':id')
-  @Roles(UserRole.ADMIN)
   @UseInterceptors(
     FilesInterceptor('files', 10, {
       limits: {
@@ -147,7 +143,6 @@ export class VotingsController {
   }
 
   @Delete(':id')
-  @Roles(UserRole.ADMIN)
   @ApiDoc({
     summary: 'Xóa mềm một cuộc bỏ phiếu',
     description: 'Admin xóa mềm voting bằng cách set isActive = false',
@@ -157,7 +152,6 @@ export class VotingsController {
   }
 
   @Delete('batch/delete')
-  @Roles(UserRole.ADMIN)
   @ApiDoc({
     summary: 'Xóa mềm nhiều cuộc bỏ phiếu',
     description: 'Admin xóa mềm nhiều voting cùng lúc',
@@ -167,7 +161,6 @@ export class VotingsController {
   }
 
   @Post(':id/vote')
-  @Roles(UserRole.RESIDENT)
   @ApiDoc({
     summary: 'Resident bỏ phiếu',
     description:

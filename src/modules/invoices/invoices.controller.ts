@@ -44,8 +44,11 @@ import { Roles } from 'src/decorators/role.decorator';
 import { UserRole } from '../accounts/enums/user-role.enum';
 import { CurrentUser } from 'src/decorators/user.decorator';
 import { Invoice } from './entities/invoice.entity';
+import { SystemModule } from '../permission/entities/role-permission.entity';
+import { RequireModule } from 'src/decorators/permission.decorator';
 
 @ApiTags('Invoices')
+@RequireModule(SystemModule.INVOICE_DEBT)
 @Controller('invoices')
 @UseInterceptors(ClassSerializerInterceptor, TransformInterceptor)
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -55,7 +58,6 @@ export class InvoicesController {
 
   @Post('admin')
   @HttpCode(HttpStatus.CREATED)
-  @Roles(UserRole.ADMIN)
   @ApiOperation({
     summary: '[ADMIN] Tạo hóa đơn mới',
     description:
